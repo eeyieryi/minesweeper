@@ -2,6 +2,7 @@ import pygame
 
 from constants import GAME_TITLE, GRID_SIZE, WINDOW_SIZE
 from grid import Grid
+from selection import Selection
 
 
 def run():
@@ -11,6 +12,7 @@ def run():
     running = True
 
     grid = Grid(size=GRID_SIZE)
+    selection = Selection()
 
     while running:
         # poll for events
@@ -20,10 +22,20 @@ def run():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     running = False
+                if event.key == pygame.K_h:
+                    selection.go_left()
+                if event.key == pygame.K_l:
+                    selection.go_right()
+                if event.key == pygame.K_k:
+                    selection.go_up()
+                if event.key == pygame.K_j:
+                    selection.go_down()
 
         # draw to screen
         screen.fill("black")
         grid.draw(screen)
+        selection.draw(screen)
+
         pygame.display.flip()
 
         # limit FPS to 60
