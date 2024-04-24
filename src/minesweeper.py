@@ -22,10 +22,12 @@ class Minesweeper:
             self._selection.go_up()
         elif key == pygame.K_j:
             self._selection.go_down()
+        elif key == pygame.K_SPACE:
+            self._grid.toggle_flag_mark(self._selection)
 
-    def draw(self, screen: pygame.Surface) -> None:
-        self._grid.draw(screen)
-        self._selection.draw(screen)
+    def draw(self, surface: pygame.Surface) -> None:
+        self._grid.draw(surface)
+        self._selection.draw(surface)
 
     def is_running(self):
         return self._running

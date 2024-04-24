@@ -27,8 +27,8 @@ class Selection:
         self._row_index += 1
         self._update_screen_pos()
 
-    def get_coords(self) -> None:
-        return (self._row_index % GRID_NUM_ROWS, self._col_index % GRID_NUM_COLS)
+    def get_coords(self, grid_size: tuple[int, int]) -> tuple[int, int]:
+        return (self._row_index % grid_size[0], self._col_index % grid_size[1])
 
     def _update_screen_pos(self) -> None:
         self._screen_pos = self._get_screen_pos()
@@ -42,7 +42,7 @@ class Selection:
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(
             screen,
-            "red",
+            "green",
             self._screen_pos,
             5,
         )

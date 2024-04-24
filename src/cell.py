@@ -12,6 +12,3 @@ class Cell:
 
     def change_state_to(self, state: CellState) -> None:
         self._state = state
-
-    def __repr__(self) -> str:
-        return f"Cell(state=CellState.{self._state.name})"
