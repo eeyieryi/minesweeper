@@ -18,7 +18,7 @@ class Tile:
     def get_cell_state(self) -> CellState:
         return self._cell.get_state()
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.Surface) -> None:
         cell_state = self._cell.get_state()
         if cell_state == CellState.UNOPENED:
             pygame.draw.rect(
@@ -30,7 +30,6 @@ class Tile:
             pygame.draw.circle(surface, "red", self._pos, 5)
         elif cell_state == CellState.OPENED:
             pygame.draw.circle(surface, "white", self._pos, 5)
-        pass
 
     def __repr__(self) -> str:
         return f"Tile(pos=({self._pos[0]}, {self._pos[1]}))"
