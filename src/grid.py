@@ -1,7 +1,7 @@
 import pygame
 
 from constants import GRID_NUM_COLS
-from tile import Tile, get_tile_pos
+from tile import Tile
 
 
 class Grid:
@@ -12,15 +12,16 @@ class Grid:
 
     def make_empty_grid_tiles(self) -> list[Tile]:
         tiles: list[Tile] = []
-        row_i, col_i = 0, 0
-        for _ in range(self._num_rows * self._num_cols):
-            tile = Tile(pos=get_tile_pos(row_i, col_i))
+        row_index, col_index = 0, 0
+        for lst_index in range(self._num_rows * self._num_cols):
+            coords = (row_index, col_index)
+            tile = Tile(coords, lst_index)
             tiles.append(tile)
-            if col_i + 1 == GRID_NUM_COLS:
-                row_i += 1  # down one row
-                col_i = 0  # reset column
+            if col_index + 1 == GRID_NUM_COLS:
+                row_index += 1  # down one row
+                col_index = 0  # reset column
             else:
-                col_i += 1  # go to the next column
+                col_index += 1  # go to the next column
         return tiles
 
     def get_tiles(self) -> list[Tile]:

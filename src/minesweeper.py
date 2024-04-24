@@ -13,7 +13,7 @@ class Minesweeper:
 
     def handle_keydown_events(self, key: int) -> None:
         if key == pygame.K_q:
-            self.running = False
+            self.kill()
         elif key == pygame.K_h:
             self._selection.go_left()
         elif key == pygame.K_l:
