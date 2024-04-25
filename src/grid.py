@@ -33,7 +33,9 @@ class Grid:
         self._tiles[self.get_tile_index(selection_coords)].toggle_flag_mark()
 
     def get_tile_index(self, coords: tuple[int, int]) -> int:
-        return (coords[0] * self._num_rows) + coords[1]
+        row_index, col_index = coords
+        tile_index = (row_index * self._num_cols) + col_index
+        return tile_index
 
     def get_tiles(self) -> list[Tile]:
         return self._tiles
