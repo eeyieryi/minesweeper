@@ -24,9 +24,34 @@ class Grid:
                 col_index += 1  # go to the next column
         return tiles
 
+    def get_tile_neighbors(self, tile: Tile) -> None:
+        row_index, col_index = tile._coords
+        if row_index - 1 >= 0:
+            # top
+            coords = (row_index - 1, col_index)
+            tile_index = self.get_tile_index(coords)
+            self._tiles[tile_index].activate_cell()
+        if row_index + 1 < self._num_rows:
+            # bottom
+            coords = (row_index + 1, col_index)
+            tile_index = self.get_tile_index(coords)
+            self._tiles[tile_index].activate_cell()
+        if col_index + 1 < self._num_cols:
+            # right
+            coords = (row_index, col_index + 1)
+            tile_index = self.get_tile_index(coords)
+            self._tiles[tile_index].activate_cell()
+        if col_index - 1 > 0:
+            # left
+            coords = (row_index, col_index - 1)
+            tile_index = self.get_tile_index(coords)
+            self._tiles[tile_index].activate_cell()
+
     def activate_cell(self, selection: Selection):
         selection_coords = selection.get_coords(self.get_size())
-        self._tiles[self.get_tile_index(selection_coords)].activate_cell()
+        tile = self._tiles[self.get_tile_index(selection_coords)]
+        tile.activate_cell()
+        self.get_tile_neighbors(tile)
 
     def toggle_flag_mark(self, selection: Selection):
         selection_coords = selection.get_coords(self.get_size())
