@@ -24,6 +24,10 @@ class Grid:
                 col_index += 1  # go to the next column
         return tiles
 
+    def activate_cell(self, selection: Selection):
+        selection_coords = selection.get_coords(self.get_size())
+        self._tiles[self.get_tile_index(selection_coords)].activate_cell()
+
     def toggle_flag_mark(self, selection: Selection):
         selection_coords = selection.get_coords(self.get_size())
         self._tiles[self.get_tile_index(selection_coords)].toggle_flag_mark()

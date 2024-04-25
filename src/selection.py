@@ -1,6 +1,6 @@
 import pygame
 
-from constants import GRID_NUM_COLS, GRID_NUM_ROWS, TILE_SIZE
+from constants import TILE_SIZE
 from tile import Tile
 
 

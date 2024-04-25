@@ -16,14 +16,17 @@ class Tile:
         self._coords = coords
         self._screen_pos = self.get_screen_pos()
 
+    def activate_cell(self) -> None:
+        cell_state = self.get_cell_state()
+        if cell_state == CellState.UNOPENED:
+            self._cell.change_state_to(CellState.OPENED)
+
     def toggle_flag_mark(self) -> None:
         cell_state = self.get_cell_state()
         if cell_state == CellState.UNOPENED:
             self._cell.change_state_to(CellState.FLAGGED)
         elif cell_state == CellState.FLAGGED:
             self._cell.change_state_to(CellState.UNOPENED)
-        else:
-            raise Exception("Cannot (un)flag an open cell")
 
     def get_cell_state(self) -> CellState:
         return self._cell.get_state()

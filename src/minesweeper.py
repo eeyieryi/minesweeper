@@ -24,6 +24,8 @@ class Minesweeper:
             self._selection.go_down()
         elif key == pygame.K_SPACE:
             self._grid.toggle_flag_mark(self._selection)
+        elif key == pygame.K_RETURN:
+            self._grid.activate_cell(self._selection)
 
     def draw(self, surface: pygame.Surface) -> None:
         self._grid.draw(surface)
