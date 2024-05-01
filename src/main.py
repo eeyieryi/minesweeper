@@ -11,6 +11,8 @@ def run():
 
     game = Minesweeper()
 
+    font = pygame.font.SysFont("monospace", 26)
+
     while game.is_running():
         # poll for events
         for event in pygame.event.get():
@@ -21,7 +23,7 @@ def run():
 
         # draw to screen
         screen.fill("black")
-        game.draw(screen)
+        game.draw(screen, font)
 
         pygame.display.flip()
 
