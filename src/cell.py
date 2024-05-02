@@ -1,6 +1,6 @@
 from enum import Enum
 
-CellState = Enum("TileState", ["UNOPENED", "OPENED", "FLAGGED"])
+CellState = Enum("CellState", ["UNOPENED", "OPENED", "FLAGGED"])
 
 
 class Cell:
@@ -9,6 +9,13 @@ class Cell:
     ) -> None:
         self._coords = coords
         self._state = state
+        self._label = ""
+
+    def set_label(self, label: str) -> None:
+        self._label = label
+
+    def get_label(self) -> str:
+        return self._label
 
     def get_coords(self) -> tuple[int, int]:
         return self._coords
@@ -20,16 +27,13 @@ class Cell:
         self._state = state
 
     def trigger(self) -> None:
-        cell_state = self.get_cell_state()
+        cell_state = self.get_state()
         if cell_state == CellState.UNOPENED:
             self.change_state_to(CellState.OPENED)
 
     def toggle_flag_mark(self) -> None:
-        cell_state = self.get_cell_state()
+        cell_state = self.get_state()
         if cell_state == CellState.UNOPENED:
             self.change_state_to(CellState.FLAGGED)
         elif cell_state == CellState.FLAGGED:
             self.change_state_to(CellState.UNOPENED)
-
-    def get_cell_state(self) -> CellState:
-        return self.get_state()

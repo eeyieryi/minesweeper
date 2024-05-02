@@ -1,14 +1,20 @@
 import pygame
 
 from cell import CellState
-from constants import CELL_SIZE, GRID_MARGIN_LEFT, GRID_MARGIN_TOP, GRID_SIZE
+from constants import (
+    CELL_SIZE,
+    GRID_MARGIN_LEFT,
+    GRID_MARGIN_TOP,
+    GRID_NUM_MINES,
+    GRID_SIZE,
+)
 from grid import Grid
 from selection import Selection
 
 
 class Minesweeper:
     def __init__(self) -> None:
-        self._grid = Grid(size=GRID_SIZE)
+        self._grid = Grid(size=GRID_SIZE, num_mines=GRID_NUM_MINES)
         self._selection = Selection()
         self._running = True
 
@@ -46,6 +52,7 @@ class Minesweeper:
     def draw(self, surface: pygame.Surface, font) -> None:
         for cell in self._grid._cells:
             cell_state = cell.get_state()
+            cell_label = cell.get_label()
             x, y = self.get_cell_screen_pos(cell.get_coords())
             if cell_state == CellState.UNOPENED:
                 pygame.draw.rect(
@@ -78,7 +85,7 @@ class Minesweeper:
                         7,
                     )
                 else:
-                    img = font.render("1", True, (255, 0, 0))
+                    img = font.render(cell_label, True, (255, 0, 0))
                     surface.blit(img, (x + 3, y + 3))
         pygame.draw.circle(
             surface,
