@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 
-from cell import Cell
+from cell import Cell, CellState
 
 GridState = Enum("GridState", ["CONTINUE", "SOLVED", "GAMEOVER"])
 
@@ -77,8 +77,15 @@ class Grid:
     def trigger_cell(self, at_coords: tuple[int, int]) -> None:
         cell = self._cells[self._get_cell_index(at_coords)]
         if cell in self._mines:
+            cell.trigger()
             self._state = GridState.GAMEOVER
-        cell.trigger()
+        elif cell.get_state() == CellState.UNOPENED:
+            cell.trigger()
+            if cell.get_label() == "0":
+                neighbors = self._get_cell_neighbors(cell)
+                for neighbor in neighbors:
+                    if neighbor.get_label() != "":
+                        self.trigger_cell(neighbor.get_coords())
 
     def toggle_flag(self, at_coords: tuple[int, int]) -> None:
         cell_index = self._get_cell_index(at_coords)
