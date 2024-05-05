@@ -50,6 +50,8 @@ class Minesweeper:
         return (cell_coords[0] + CELL_SIZE / 2, cell_coords[1] + CELL_SIZE / 2)
 
     def draw(self, surface: pygame.Surface, font) -> None:
+        img = font.render(self._grid.get_state().name, True, (255, 0, 0))
+        surface.blit(img, (20, 20))
         for cell in self._grid._cells:
             cell_state = cell.get_state()
             cell_label = cell.get_label()
