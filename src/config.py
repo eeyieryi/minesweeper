@@ -1,38 +1,6 @@
-from enum import Enum
+import pygame
 
-EDifficulty = Enum("Difficulty", ["beginner", "intermediate", "expert"])
-
-
-class Difficulty:
-    def __init__(
-        self, grid_num_rows, grid_num_cols, grid_num_mines, grid_cell_size
-    ) -> None:
-        self.grid_num_rows = grid_num_rows
-        self.grid_num_cols = grid_num_cols
-        self.grid_num_mines = grid_num_mines
-        self.grid_cell_size = grid_cell_size
-
-
-difficulties = {
-    EDifficulty.beginner: Difficulty(
-        grid_num_rows=9,
-        grid_num_cols=9,
-        grid_num_mines=10,
-        grid_cell_size=25,
-    ),
-    EDifficulty.intermediate: Difficulty(
-        grid_num_rows=16,
-        grid_num_cols=16,
-        grid_num_mines=40,
-        grid_cell_size=25,
-    ),
-    EDifficulty.expert: Difficulty(
-        grid_num_rows=16,
-        grid_num_cols=30,
-        grid_num_mines=99,
-        grid_cell_size=20,
-    ),
-}
+from difficulty import EDifficulty, difficulties
 
 
 class Config:
@@ -41,6 +9,7 @@ class Config:
         self.window_width = 640
         self.window_height = 480
         self.change_difficulty_to(EDifficulty.beginner)
+        self.font = pygame.font.SysFont("monospace", 26)
 
     def change_difficulty_to(self, difficulty: EDifficulty) -> None:
         self._difficulty = difficulties[difficulty]

@@ -7,13 +7,13 @@ from minesweeper import Minesweeper
 def run():
     config = Config()
 
-    screen = pygame.display.set_mode((config.window_width, config.window_height))
+    screen_surface = pygame.display.set_mode(
+        (config.window_width, config.window_height)
+    )
     pygame.display.set_caption(config.window_title)
     clock = pygame.time.Clock()
 
     game = Minesweeper(config)
-
-    font = pygame.font.SysFont("monospace", 26)
 
     while game.is_running():
         # poll for events
@@ -24,8 +24,8 @@ def run():
                 game.handle_keydown_events(event.key)
 
         # draw to screen
-        screen.fill("black")
-        game.draw(screen, font)
+        screen_surface.fill("black")
+        game.draw(screen_surface)
 
         pygame.display.flip()
 

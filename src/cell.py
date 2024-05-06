@@ -9,7 +9,10 @@ class Cell:
     ) -> None:
         self._coords = coords
         self._state = state
-        self._label = ""
+        self._setup()
+
+    def _setup(self) -> None:
+        self.set_label("")
 
     def set_label(self, label: str) -> None:
         self._label = label
