@@ -85,3 +85,24 @@ class Ui:
             cell_coords[0] + self._cfg.grid_cell_size / 2,
             cell_coords[1] + self._cfg.grid_cell_size / 2,
         )
+
+    def get_coords_from_screen_pos(
+        self, pos: tuple[int, int]
+    ) -> tuple[int, int] | None:
+        pos_x, pos_y = pos
+
+        start_x, start_y = self.get_cell_screen_pos((0, 0))
+        end_x, end_y = self.get_cell_screen_pos(
+            (self._cfg.grid_num_rows - 1, self._cfg.grid_num_cols - 1)
+        )
+        end_x += self._cfg.grid_cell_size
+        end_y += self._cfg.grid_cell_size
+
+        if pos_x >= start_x and pos_x <= end_x and pos_y >= start_y and pos_y <= end_y:
+            row_index = (
+                (pos_y - start_y) // self._cfg.grid_cell_size
+            ) % self._cfg.grid_num_rows
+            col_index = (
+                (pos_x - start_x) // self._cfg.grid_cell_size
+            ) % self._cfg.grid_num_cols
+            return (int(row_index), int(col_index))

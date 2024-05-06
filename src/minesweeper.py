@@ -33,6 +33,17 @@ class Minesweeper:
         elif key == pygame.K_RETURN:
             self._grid.trigger_cell_at(self._selection.get_coords())
 
+    def handle_mousedown_event(self, event) -> None:
+        # handle pygame.MOUSEBUTTONDOWN
+        coords = self._ui.get_coords_from_screen_pos(event.pos)
+        if coords:
+            if event.button == 1:
+                # left click
+                self._grid.trigger_cell_at(coords)
+            elif event.button == 3:
+                # right click
+                self._grid.toggle_flag_at(coords)
+
     def draw(self, surface) -> None:
         self._ui.draw(surface, self._grid)
 

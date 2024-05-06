@@ -20,8 +20,10 @@ def run():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game.kill()
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 game.handle_keydown_events(event.key)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                game.handle_mousedown_event(event)
 
         # draw to screen
         screen_surface.fill("black")
