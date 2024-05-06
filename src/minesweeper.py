@@ -1,21 +1,19 @@
 import pygame
 
 from cell import CellState
-from constants import (
-    CELL_SIZE,
-    GRID_MARGIN_LEFT,
-    GRID_MARGIN_TOP,
-    GRID_NUM_MINES,
-    GRID_SIZE,
-)
+from config import Config
 from grid import Grid
 from selection import Selection
 
 
 class Minesweeper:
-    def __init__(self) -> None:
-        self._grid = Grid(size=GRID_SIZE, num_mines=GRID_NUM_MINES)
-        self._selection = Selection()
+    def __init__(self, config: Config) -> None:
+        self.cfg = config
+        self.new_game()
+
+    def new_game(self) -> None:
+        self._grid = Grid(self.cfg)
+        self._selection = Selection(self.cfg)
         self._running = True
 
     def handle_keydown_events(self, key: int) -> None:
@@ -30,9 +28,9 @@ class Minesweeper:
         elif key == pygame.K_j:
             self._selection.go_down()
         elif key == pygame.K_SPACE:
-            self._grid.toggle_flag(self._selection.get_coords(self._grid.get_size()))
+            self._grid.toggle_flag(self._selection.get_coords())
         elif key == pygame.K_RETURN:
-            self._grid.trigger_cell(self._selection.get_coords(self._grid.get_size()))
+            self._grid.trigger_cell(self._selection.get_coords())
 
     def get_cell_screen_pos(self, coords: tuple[int, int]) -> tuple[float, float]:
         grid_num_rows, grid_num_cols = self._grid.get_size()
@@ -41,13 +39,16 @@ class Minesweeper:
         col_index = coords[1] % grid_num_cols
 
         return (
-            GRID_MARGIN_LEFT + col_index * CELL_SIZE,
-            GRID_MARGIN_TOP + row_index * CELL_SIZE,
+            self.cfg.grid_margin_left + col_index * self.cfg.grid_cell_size,
+            self.cfg.grid_margin_top + row_index * self.cfg.grid_cell_size,
         )
 
     def get_selection_screen_pos(self, coords: tuple[int, int]) -> tuple[float, float]:
         cell_coords = self.get_cell_screen_pos(coords)
-        return (cell_coords[0] + CELL_SIZE / 2, cell_coords[1] + CELL_SIZE / 2)
+        return (
+            cell_coords[0] + self.cfg.grid_cell_size / 2,
+            cell_coords[1] + self.cfg.grid_cell_size / 2,
+        )
 
     def draw(self, surface: pygame.Surface, font) -> None:
         img = font.render(self._grid.get_state().name, True, (255, 0, 0))
@@ -63,8 +64,8 @@ class Minesweeper:
                     pygame.Rect(
                         x,
                         y,
-                        CELL_SIZE - 1,
-                        CELL_SIZE - 1,
+                        self.cfg.grid_cell_size - 1,
+                        self.cfg.grid_cell_size - 1,
                     ),
                 )
             elif cell_state == CellState.FLAGGED:
@@ -74,8 +75,8 @@ class Minesweeper:
                     pygame.Rect(
                         x + 3,
                         y + 3,
-                        CELL_SIZE - 6,
-                        CELL_SIZE - 6,
+                        self.cfg.grid_cell_size - 6,
+                        self.cfg.grid_cell_size - 6,
                     ),
                 )
             elif cell_state == CellState.OPENED:
@@ -83,7 +84,10 @@ class Minesweeper:
                     pygame.draw.circle(
                         surface,
                         "white",
-                        (x + CELL_SIZE / 2, y + CELL_SIZE / 2),
+                        (
+                            x + self.cfg.grid_cell_size / 2,
+                            y + self.cfg.grid_cell_size / 2,
+                        ),
                         7,
                     )
                 else:
@@ -92,9 +96,7 @@ class Minesweeper:
         pygame.draw.circle(
             surface,
             "green",
-            self.get_selection_screen_pos(
-                self._selection.get_coords(self._grid.get_size())
-            ),
+            self.get_selection_screen_pos(self._selection.get_coords()),
             5,
         )
 

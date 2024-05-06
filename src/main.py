@@ -1,15 +1,17 @@
 import pygame
 
-from constants import GAME_TITLE, WINDOW_SIZE
+from config import Config
 from minesweeper import Minesweeper
 
 
 def run():
-    screen = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption(GAME_TITLE)
+    config = Config()
+
+    screen = pygame.display.set_mode((config.window_width, config.window_height))
+    pygame.display.set_caption(config.window_title)
     clock = pygame.time.Clock()
 
-    game = Minesweeper()
+    game = Minesweeper(config)
 
     font = pygame.font.SysFont("monospace", 26)
 

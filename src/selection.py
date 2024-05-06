@@ -1,5 +1,9 @@
+from config import Config
+
+
 class Selection:
-    def __init__(self) -> None:
+    def __init__(self, cfg: Config) -> None:
+        self._cfg = cfg
         self._row_index = 0
         self._col_index = 0
 
@@ -15,5 +19,8 @@ class Selection:
     def go_down(self) -> None:
         self._row_index += 1
 
-    def get_coords(self, grid_size: tuple[int, int]) -> tuple[int, int]:
-        return (self._row_index % grid_size[0], self._col_index % grid_size[1])
+    def get_coords(self) -> tuple[int, int]:
+        return (
+            self._row_index % self._cfg.grid_num_rows,
+            self._col_index % self._cfg.grid_num_cols,
+        )

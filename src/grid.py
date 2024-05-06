@@ -2,15 +2,16 @@ import random
 from enum import Enum
 
 from cell import Cell, CellState
+from config import Config
 
 GridState = Enum("GridState", ["CONTINUE", "SOLVED", "GAMEOVER"])
 
 
 class Grid:
-    def __init__(self, size: tuple[int, int], num_mines: int = 10) -> None:
-        self._num_rows = size[0]
-        self._num_cols = size[1]
-        self._num_mines = num_mines
+    def __init__(self, cfg: Config) -> None:
+        self._num_rows = cfg.grid_num_rows
+        self._num_cols = cfg.grid_num_cols
+        self._num_mines = cfg.grid_num_mines
         self._state = GridState.CONTINUE
         self._cell_count = self._num_rows * self._num_cols
         self._setup()
