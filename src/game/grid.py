@@ -85,7 +85,7 @@ class Grid:
         cell_index = self._get_cell_index(coords)
         self._cells[cell_index].toggle_flag_mark()
 
-    def trigger_cell_at(self, coords: tuple[int, int]) -> None:
+    def trigger_cell_at(self, coords: tuple[int, int]) -> GridState:
         if self.get_state() != GridState.CONTINUE:
             return
         cell = self._cells[self._get_cell_index(coords)]
@@ -100,12 +100,23 @@ class Grid:
                     if neighbor.get_label() != "M":
                         self.trigger_cell_at(neighbor.get_coords())
             self._check_state()
+        return self.get_state()
 
-    def _check_state(self) -> None:
-        opened_cells = list(
+    def get_mines_left_count(self) -> int:
+        return self._num_mines - len(self._get_flagged_cells())
+
+    def _get_flagged_cells(self) -> list[Cell]:
+        return list(
+            filter(lambda cell: cell.get_state() == CellState.FLAGGED, self._cells)
+        )
+
+    def _get_opened_cells(self) -> list[Cell]:
+        return list(
             filter(lambda cell: cell.get_state() == CellState.OPENED, self._cells)
         )
-        if len(opened_cells) == self._cell_count - self._num_mines:
+
+    def _check_state(self) -> None:
+        if len(self._get_opened_cells()) == self._cell_count - self._num_mines:
             self._state = GridState.SOLVED
 
     def get_state(self) -> GridState:

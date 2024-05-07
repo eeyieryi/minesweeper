@@ -5,7 +5,7 @@ import pygame
 from config import Config
 from game.cell import CellState
 from game.difficulty import EDifficulty
-from game.grid import Grid
+from game.grid import Grid, GridState
 from game_state import GameState
 from selection import Selection
 from ui.fonts import FontSize, font_filepath
@@ -25,8 +25,8 @@ class Ui:
 
     def _setup_fonts(self) -> None:
         self._fonts = {
-            FontSize.Small: pygame.Font(font_filepath, 26),
-            FontSize.Medium: pygame.Font(font_filepath, 30),
+            FontSize.Small: pygame.Font(font_filepath, 30),
+            FontSize.Medium: pygame.Font(font_filepath, 42),
             FontSize.Large: pygame.Font(font_filepath, 72),
             FontSize.XLarge: pygame.Font(font_filepath, 96),
         }
@@ -52,6 +52,12 @@ class Ui:
                 EDifficulty.expert.name.upper(), True, "red"
             ),
         }
+        self._gameover_info_text_actions = self._fonts[FontSize.Medium].render(
+            "PRESS (ESC)APE OR CLICK HERE", True, "white"
+        )
+        self._gameover_info_text = self._fonts[FontSize.Medium].render(
+            "TO EXIT TO MAIN MENU", True, "white"
+        )
         self._setup_ui_surfaces_positions()
 
     def _setup_ui_surfaces_positions(self) -> None:
@@ -69,10 +75,37 @@ class Ui:
             self._exit_button_text.get_width() / 2
         )
         self._exit_button_start_y = half_height + 72 + 72
+        self._gameover_info_text_start_x = half_width - (
+            self._gameover_info_text.get_width() / 2
+        )
+        self._gameover_info_text_start_y = (
+            self._cfg.window_height - self._gameover_info_text.get_height() * 1.5
+        )
+        self._gameover_info_text_actions_start_x = half_width - (
+            self._gameover_info_text_actions.get_width() / 2
+        )
+        self._gameover_info_text_actions_start_y = (
+            self._gameover_info_text_start_y
+            - self._gameover_info_text_actions.get_height()
+        )
         self._outline_selection_start_x = half_width - max_menu_item_width / 2 - 10
         self._outline_selection_width = max_menu_item_width + 20
         self._outline_selection_height = 72 + 10
         self._update_outline_selection_y()
+        self._setup_cell_labels_text()
+
+    def _setup_cell_labels_text(self) -> None:
+        self.cell_labels_texts = {
+            "0": self._fonts[FontSize.Small].render("0", True, (55, 55, 55)),
+            "1": self._fonts[FontSize.Small].render("1", True, (0, 0, 255)),
+            "2": self._fonts[FontSize.Small].render("2", True, (0, 255, 0)),
+            "3": self._fonts[FontSize.Small].render("3", True, (255, 0, 0)),
+            "4": self._fonts[FontSize.Small].render("4", True, (0, 125, 255)),
+            "5": self._fonts[FontSize.Small].render("5", True, (125, 255, 0)),
+            "6": self._fonts[FontSize.Small].render("6", True, (255, 0, 125)),
+            "7": self._fonts[FontSize.Small].render("7", True, (62, 125, 255)),
+            "8": self._fonts[FontSize.Small].render("8", True, (125, 255, 62)),
+        }
 
     def _update_outline_selection_y(self) -> None:
         half_height = self._cfg.window_height / 2
@@ -81,65 +114,71 @@ class Ui:
         )
 
     def handle_mousedown_events(
-        self, event
+        self, event, state: GameState
     ) -> Literal["PLAY"] | Literal["EXIT"] | None:
         mx, my = event.pos
-        start_x = self._outline_selection_start_x - 20
-        end_x = self._outline_selection_start_x + self._outline_selection_width + 20
-        if mx >= start_x and mx <= end_x:
-            rect_height = self._difficulty_settings_texts[
-                EDifficulty.intermediate
-            ].get_height()
-            if (
-                my >= self._difficulty_setting_start_y
-                and my <= self._difficulty_setting_start_y + rect_height
-            ):
-                if mx < end_x - ((end_x - start_x) / 2):
-                    self.select_menu_go_left()
-                else:
-                    self.select_menu_go_right()
-            elif (
-                my >= self._play_button_start_y
-                and my <= self._play_button_start_y + rect_height
-            ):
-                # start game
-                if self._current_menu_selection != 0:
-                    self._current_menu_selection = 0
-                    self._update_outline_selection_y()
-                return self.get_current_menu_selection()
-            elif (
-                my >= self._exit_button_start_y
-                and my <= self._exit_button_start_y + rect_height
-            ):
-                # exit game
-                if self._current_menu_selection != 1:
-                    self._current_menu_selection = 1
-                    self._update_outline_selection_y()
-                return self.get_current_menu_selection()
+        if state == GameState.MAIN:
+            start_x = self._outline_selection_start_x - 20
+            end_x = self._outline_selection_start_x + self._outline_selection_width + 20
+            if mx >= start_x and mx <= end_x:
+                rect_height = self._difficulty_settings_texts[
+                    EDifficulty.intermediate
+                ].get_height()
+                if (
+                    my >= self._difficulty_setting_start_y
+                    and my <= self._difficulty_setting_start_y + rect_height
+                ):
+                    if mx < end_x - ((end_x - start_x) / 2):
+                        self.select_menu_go_left()
+                    else:
+                        self.select_menu_go_right()
+                elif (
+                    my >= self._play_button_start_y
+                    and my <= self._play_button_start_y + rect_height
+                ):
+                    # start game
+                    if self._current_menu_selection != 0:
+                        self._current_menu_selection = 0
+                        self._update_outline_selection_y()
+                    return self.get_current_menu_selection()
+                elif (
+                    my >= self._exit_button_start_y
+                    and my <= self._exit_button_start_y + rect_height
+                ):
+                    # exit game
+                    if self._current_menu_selection != 1:
+                        self._current_menu_selection = 1
+                        self._update_outline_selection_y()
+                    return self.get_current_menu_selection()
+        elif state == GameState.OVER:
+            if my >= self._gameover_info_text_actions_start_y:
+                return "EXIT"
 
-    def handle_mousemotion_events(self, event) -> None:
-        self._show_selection = False
-        mx, my = event.pos
-        start_x = self._outline_selection_start_x - 20
-        end_x = self._outline_selection_start_x + self._outline_selection_width + 20
-        if mx >= start_x and mx <= end_x:
-            rect_height = self._difficulty_settings_texts[
-                EDifficulty.intermediate
-            ].get_height()
-            if (
-                my >= self._play_button_start_y
-                and my <= self._play_button_start_y + rect_height
-            ):
-                if self._current_menu_selection != 0:
-                    self._current_menu_selection = 0
-                    self._update_outline_selection_y()
-            elif (
-                my >= self._exit_button_start_y
-                and my <= self._exit_button_start_y + rect_height
-            ):
-                if self._current_menu_selection != 1:
-                    self._current_menu_selection = 1
-                    self._update_outline_selection_y()
+    def handle_mousemotion_events(self, event, state: GameState) -> None:
+        if state == GameState.MAIN:
+            mx, my = event.pos
+            start_x = self._outline_selection_start_x - 20
+            end_x = self._outline_selection_start_x + self._outline_selection_width + 20
+            if mx >= start_x and mx <= end_x:
+                rect_height = self._difficulty_settings_texts[
+                    EDifficulty.intermediate
+                ].get_height()
+                if (
+                    my >= self._play_button_start_y
+                    and my <= self._play_button_start_y + rect_height
+                ):
+                    if self._current_menu_selection != 0:
+                        self._current_menu_selection = 0
+                        self._update_outline_selection_y()
+                elif (
+                    my >= self._exit_button_start_y
+                    and my <= self._exit_button_start_y + rect_height
+                ):
+                    if self._current_menu_selection != 1:
+                        self._current_menu_selection = 1
+                        self._update_outline_selection_y()
+        elif state == GameState.PLAYING:
+            self._show_selection = False
 
     def get_current_menu_selection(self) -> Literal["PLAY"] | Literal["EXIT"]:
         if self._current_menu_selection == 0:
@@ -178,12 +217,44 @@ class Ui:
         elif game_state == GameState.OVER:
             self._draw_grid_status(surface, grid)
             self._draw_grid(surface, grid)
+            self._draw_gameover_info(surface)
+
+    def _draw_gameover_info(self, surface: pygame.Surface) -> None:
+        surface.blit(
+            self._gameover_info_text_actions,
+            (
+                self._gameover_info_text_actions_start_x,
+                self._gameover_info_text_actions_start_y,
+            ),
+        )
+        surface.blit(
+            self._gameover_info_text,
+            (self._gameover_info_text_start_x, self._gameover_info_text_start_y),
+        )
 
     def _draw_grid_status(self, surface: pygame.Surface, grid: Grid) -> None:
-        img = self._fonts[FontSize.Medium].render(
-            grid.get_state().name, True, (255, 0, 0)
+        grid_state = grid.get_state()
+        if grid_state != GridState.CONTINUE:
+            grid_state_text_color = "white"
+            if grid_state == GridState.SOLVED:
+                grid_state_text_color = "yellow"
+            elif grid_state == GridState.GAMEOVER:
+                grid_state_text_color = "red"
+            grid_state_text = self._fonts[FontSize.Large].render(
+                grid.get_state().name, True, grid_state_text_color
+            )
+            surface.blit(
+                grid_state_text,
+                (self._cfg.window_width / 2 - grid_state_text.get_width() / 2, 20),
+            )
+        mines_left_count = grid.get_mines_left_count()
+        mines_left_count_text = self._fonts[FontSize.Large].render(
+            f"{mines_left_count}", True, (255, 0, 0)
         )
-        surface.blit(img, (20, 20))
+        surface.blit(
+            mines_left_count_text,
+            (self._cfg.window_width - mines_left_count_text.get_width() - 20, 20),
+        )
 
     def _draw_grid(self, surface: pygame.Surface, grid: Grid) -> None:
         for cell in grid.get_cells():
@@ -202,6 +273,7 @@ class Ui:
                     ),
                 )
             elif cell_state == CellState.FLAGGED:
+                # TODO: Draw a 'real' flag
                 pygame.draw.rect(
                     surface,
                     "red",
@@ -213,7 +285,8 @@ class Ui:
                     ),
                 )
             elif cell_state == CellState.OPENED:
-                if cell in grid.get_mines():
+                if cell_label == "M":
+                    # TODO: Draw a 'real' mine
                     pygame.draw.circle(
                         surface,
                         "white",
@@ -224,10 +297,7 @@ class Ui:
                         7,
                     )
                 else:
-                    img = self._fonts[FontSize.Medium].render(
-                        cell_label, True, (255, 0, 0)
-                    )
-                    surface.blit(img, (x + 6, y))
+                    surface.blit(self.cell_labels_texts[cell_label], (x + 6, y))
 
     def _draw_selection(self, surface: pygame.Surface) -> None:
         if self._show_selection:
