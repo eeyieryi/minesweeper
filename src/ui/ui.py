@@ -1,23 +1,38 @@
 import pygame
 
-from cell import CellState
 from config import Config
-from grid import Grid
+from game.cell import CellState
+from game.grid import Grid
+from game_state import GameState
 from selection import Selection
+from ui.fonts import FontSize, font_filepath
 
 
 class Ui:
     def __init__(self, cfg: Config, selection: Selection) -> None:
         self._cfg = cfg
         self._selection = selection
+        self.fonts = {
+            FontSize.Small: pygame.Font(font_filepath, 26),
+            FontSize.Medium: pygame.Font(font_filepath, 30),
+            FontSize.Large: pygame.Font(font_filepath, 42),
+        }
 
-    def draw(self, surface: pygame.Surface, grid: Grid) -> None:
-        self.draw_grid_status(surface, grid)
-        self.draw_grid(surface, grid)
-        self.draw_selection(surface)
+    def draw(self, surface: pygame.Surface, game_state: GameState, grid: Grid) -> None:
+        if game_state == GameState.MAIN:
+            self.draw_main_menu(surface)
+        elif game_state == GameState.PLAYING:
+            self.draw_grid_status(surface, grid)
+            self.draw_grid(surface, grid)
+            self.draw_selection(surface)
+        elif game_state == GameState.OVER:
+            self.draw_grid_status(surface, grid)
+            self.draw_grid(surface, grid)
 
     def draw_grid_status(self, surface: pygame.Surface, grid: Grid) -> None:
-        img = self._cfg.font.render(grid.get_state().name, True, (255, 0, 0))
+        img = self.fonts[FontSize.Medium].render(
+            grid.get_state().name, True, (255, 0, 0)
+        )
         surface.blit(img, (20, 20))
 
     def draw_grid(self, surface: pygame.Surface, grid: Grid) -> None:
@@ -59,8 +74,10 @@ class Ui:
                         7,
                     )
                 else:
-                    img = self._cfg.font.render(cell_label, True, (255, 0, 0))
-                    surface.blit(img, (x + 3, y + 3))
+                    img = self.fonts[FontSize.Medium].render(
+                        cell_label, True, (255, 0, 0)
+                    )
+                    surface.blit(img, (x + 6, y))
 
     def draw_selection(self, surface: pygame.Surface) -> None:
         pygame.draw.circle(
@@ -106,3 +123,9 @@ class Ui:
                 (pos_x - start_x) // self._cfg.grid_cell_size
             ) % self._cfg.grid_num_cols
             return (int(row_index), int(col_index))
+
+    def draw_main_menu(self, surface: pygame.Surface) -> None:
+        img = self.fonts[FontSize.Large].render(
+            self._cfg.window_title, True, (255, 0, 0)
+        )
+        surface.blit(img, (240, 200))

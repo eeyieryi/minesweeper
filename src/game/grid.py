@@ -1,8 +1,8 @@
 import random
 from enum import Enum
 
-from cell import Cell, CellState
 from config import Config
+from game.cell import Cell, CellState
 
 GridState = Enum("GridState", ["CONTINUE", "SOLVED", "GAMEOVER"])
 
