@@ -18,6 +18,10 @@ class Ui:
         self._current_menu_selection = 0
         self._setup_fonts()
         self._setup_ui_surfaces()
+        self._show_selection = False
+
+    def activate_selection(self) -> None:
+        self._show_selection = True
 
     def _setup_fonts(self) -> None:
         self._fonts = {
@@ -56,14 +60,15 @@ class Ui:
         max_menu_item_width = self._difficulty_settings_texts[
             EDifficulty.intermediate
         ].get_width()
-        self._exit_button_start_x = half_width - (
-            self._exit_button_text.get_width() / 2
-        )
-        self._exit_button_start_y = half_height + 72 + 72
+        self._difficulty_setting_start_y = half_height
         self._play_button_start_x = half_width - (
             self._play_button_text.get_width() / 2
         )
         self._play_button_start_y = half_height + 72
+        self._exit_button_start_x = half_width - (
+            self._exit_button_text.get_width() / 2
+        )
+        self._exit_button_start_y = half_height + 72 + 72
         self._outline_selection_start_x = half_width - max_menu_item_width / 2 - 10
         self._outline_selection_width = max_menu_item_width + 20
         self._outline_selection_height = 72 + 10
@@ -75,8 +80,66 @@ class Ui:
             72 * (self._current_menu_selection + 1)
         )
 
-    def handle_mousedown_events(self, event) -> None:
-        print(event)
+    def handle_mousedown_events(
+        self, event
+    ) -> Literal["PLAY"] | Literal["EXIT"] | None:
+        mx, my = event.pos
+        start_x = self._outline_selection_start_x - 20
+        end_x = self._outline_selection_start_x + self._outline_selection_width + 20
+        if mx >= start_x and mx <= end_x:
+            rect_height = self._difficulty_settings_texts[
+                EDifficulty.intermediate
+            ].get_height()
+            if (
+                my >= self._difficulty_setting_start_y
+                and my <= self._difficulty_setting_start_y + rect_height
+            ):
+                if mx < end_x - ((end_x - start_x) / 2):
+                    self.select_menu_go_left()
+                else:
+                    self.select_menu_go_right()
+            elif (
+                my >= self._play_button_start_y
+                and my <= self._play_button_start_y + rect_height
+            ):
+                # start game
+                if self._current_menu_selection != 0:
+                    self._current_menu_selection = 0
+                    self._update_outline_selection_y()
+                return self.get_current_menu_selection()
+            elif (
+                my >= self._exit_button_start_y
+                and my <= self._exit_button_start_y + rect_height
+            ):
+                # exit game
+                if self._current_menu_selection != 1:
+                    self._current_menu_selection = 1
+                    self._update_outline_selection_y()
+                return self.get_current_menu_selection()
+
+    def handle_mousemotion_events(self, event) -> None:
+        self._show_selection = False
+        mx, my = event.pos
+        start_x = self._outline_selection_start_x - 20
+        end_x = self._outline_selection_start_x + self._outline_selection_width + 20
+        if mx >= start_x and mx <= end_x:
+            rect_height = self._difficulty_settings_texts[
+                EDifficulty.intermediate
+            ].get_height()
+            if (
+                my >= self._play_button_start_y
+                and my <= self._play_button_start_y + rect_height
+            ):
+                if self._current_menu_selection != 0:
+                    self._current_menu_selection = 0
+                    self._update_outline_selection_y()
+            elif (
+                my >= self._exit_button_start_y
+                and my <= self._exit_button_start_y + rect_height
+            ):
+                if self._current_menu_selection != 1:
+                    self._current_menu_selection = 1
+                    self._update_outline_selection_y()
 
     def get_current_menu_selection(self) -> Literal["PLAY"] | Literal["EXIT"]:
         if self._current_menu_selection == 0:
@@ -167,12 +230,13 @@ class Ui:
                     surface.blit(img, (x + 6, y))
 
     def _draw_selection(self, surface: pygame.Surface) -> None:
-        pygame.draw.circle(
-            surface,
-            "green",
-            self._get_selection_screen_pos(),
-            5,
-        )
+        if self._show_selection:
+            pygame.draw.circle(
+                surface,
+                "green",
+                self._get_selection_screen_pos(),
+                5,
+            )
 
     def _get_cell_screen_pos(self, coords: tuple[int, int]) -> tuple[float, float]:
         row_index = coords[0] % self._cfg.grid_num_rows
@@ -230,7 +294,7 @@ class Ui:
             difficulty_setting_text,
             (
                 half_width - (difficulty_setting_text.get_width() / 2),
-                half_height,
+                self._difficulty_setting_start_y,
             ),
         )
 

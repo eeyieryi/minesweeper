@@ -34,6 +34,7 @@ class Minesweeper:
         if key == pygame.K_q:
             self.kill()
         if game_state == GameState.PLAYING:
+            self._ui.activate_selection()
             if key == pygame.K_h:
                 self._selection.go_left()
             elif key == pygame.K_l:
@@ -75,7 +76,16 @@ class Minesweeper:
                     # right click
                     self._grid.toggle_flag_at(coords)
         elif game_state == GameState.MAIN:
-            self._ui.handle_mousedown_events(event)
+            action = self._ui.handle_mousedown_events(event)
+            if action is not None:
+                if action == "PLAY":
+                    self._start_game()
+                elif action == "EXIT":
+                    self.kill()
+
+    def handle_mousemotion_events(self, event) -> None:
+        # handle pygame.MOUSEMOTION
+        self._ui.handle_mousemotion_events(event)
 
     def draw(self, surface) -> None:
         game_state = self.get_state()
