@@ -7,7 +7,7 @@ class Config:
         self.window_width = 800
         self.window_height = 600
         self.grid_cell_size = 25
-        self.change_difficulty_to(EDifficulty.expert)
+        self.change_difficulty_to(EDifficulty.beginner)
 
     def change_difficulty_to(self, difficulty: EDifficulty) -> None:
         self._difficulty = difficulties[difficulty]
@@ -20,3 +20,6 @@ class Config:
         self.grid_margin_top = (
             self.window_height - (self.grid_num_rows * self.grid_cell_size)
         ) / 2
+
+    def get_current_difficulty(self) -> EDifficulty:
+        return EDifficulty[self._difficulty.name]

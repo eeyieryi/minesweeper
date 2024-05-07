@@ -12,16 +12,16 @@ from ui.ui import Ui
 class Minesweeper:
     def __init__(self, config: Config) -> None:
         self._cfg = config
-        self._state = GameState.PLAYING
-        self._setup()
-
-    def _setup(self) -> None:
+        self._state = GameState.MAIN
         self._selection = Selection(self._cfg)
-        self._ui = Ui(
-            self._cfg, self._selection
-        )  # TODO: remember to reset selection when resetting grid
-        self._grid = Grid(self._cfg)  # TODO: move from here
+        self._ui = Ui(self._cfg, self._selection)
+        self._grid = None
         self._running = True
+
+    def _start_game(self) -> None:
+        self._selection.reset()
+        self._grid = Grid(self._cfg)
+        self.change_state_to(GameState.PLAYING)
 
     def get_state(self) -> GameState:
         return self._state
@@ -46,8 +46,23 @@ class Minesweeper:
                 self._grid.toggle_flag_at(self._selection.get_coords())
             elif key == pygame.K_RETURN:
                 self._grid.trigger_cell_at(self._selection.get_coords())
+        elif game_state == GameState.MAIN:
+            if key == pygame.K_j:
+                self._ui.select_menu_go_down()
+            elif key == pygame.K_k:
+                self._ui.select_menu_go_up()
+            elif key == pygame.K_h:
+                self._ui.select_menu_go_left()
+            elif key == pygame.K_l:
+                self._ui.select_menu_go_right()
+            elif key == pygame.K_RETURN:
+                menu_selection = self._ui.get_current_menu_selection()
+                if menu_selection == "EXIT":
+                    self.kill()
+                elif menu_selection == "PLAY":
+                    self._start_game()
 
-    def handle_mousedown_event(self, event) -> None:
+    def handle_mousedown_events(self, event) -> None:
         # handle pygame.MOUSEBUTTONDOWN
         game_state = self.get_state()
         if game_state == GameState.PLAYING:
@@ -59,6 +74,8 @@ class Minesweeper:
                 elif event.button == 3:
                     # right click
                     self._grid.toggle_flag_at(coords)
+        elif game_state == GameState.MAIN:
+            self._ui.handle_mousedown_events(event)
 
     def draw(self, surface) -> None:
         game_state = self.get_state()

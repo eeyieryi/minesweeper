@@ -24,3 +24,7 @@ class Selection:
             self._row_index % self._cfg.grid_num_rows,
             self._col_index % self._cfg.grid_num_cols,
         )
+
+    def reset(self) -> None:
+        self._row_index = 0
+        self._col_index = 0
