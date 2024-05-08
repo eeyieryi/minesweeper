@@ -9,6 +9,7 @@ from game.grid import Grid, GridState
 from game_state import GameState
 from selection import Selection
 from ui.fonts import FontSize, font_filepath
+from ui.images import flag_filepath
 
 
 class Ui:
@@ -58,6 +59,7 @@ class Ui:
         self._gameover_info_text = self._fonts[FontSize.Medium].render(
             "TO EXIT TO MAIN MENU", True, "white"
         )
+        self._flag_img = pygame.image.load(flag_filepath)
         self._setup_ui_surfaces_positions()
 
     def _setup_ui_surfaces_positions(self) -> None:
@@ -261,10 +263,12 @@ class Ui:
             cell_state = cell.get_state()
             cell_label = cell.get_label()
             x, y = self._get_cell_screen_pos(cell.get_coords())
+
+            # draw background for cell
             if cell_state == CellState.UNOPENED:
                 pygame.draw.rect(
                     surface,
-                    "grey",
+                    "gray",
                     pygame.Rect(
                         x,
                         y,
@@ -272,16 +276,24 @@ class Ui:
                         self._cfg.grid_cell_size - 1,
                     ),
                 )
-            elif cell_state == CellState.FLAGGED:
-                # TODO: Draw a 'real' flag
+            else:
                 pygame.draw.rect(
                     surface,
-                    "red",
+                    "darkgray",
                     pygame.Rect(
-                        x + 3,
-                        y + 3,
-                        self._cfg.grid_cell_size - 6,
-                        self._cfg.grid_cell_size - 6,
+                        x,
+                        y,
+                        self._cfg.grid_cell_size - 1,
+                        self._cfg.grid_cell_size - 1,
+                    ),
+                )
+
+            if cell_state == CellState.FLAGGED:
+                surface.blit(
+                    self._flag_img,
+                    (
+                        x,
+                        y,
                     ),
                 )
             elif cell_state == CellState.OPENED:
