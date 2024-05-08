@@ -40,26 +40,26 @@ class Minesweeper:
             self.kill()
         if game_state == GameState.PLAYING:
             self._ui.activate_selection()
-            if key == pygame.K_h:
+            if key in [pygame.K_h, pygame.K_LEFT]:
                 self._selection.go_left()
-            elif key == pygame.K_l:
+            elif key in [pygame.K_l, pygame.K_RIGHT]:
                 self._selection.go_right()
-            elif key == pygame.K_k:
+            elif key in [pygame.K_k, pygame.K_UP]:
                 self._selection.go_up()
-            elif key == pygame.K_j:
+            elif key in [pygame.K_j, pygame.K_DOWN]:
                 self._selection.go_down()
             elif key == pygame.K_SPACE:
                 self._grid.toggle_flag_at(self._selection.get_coords())
             elif key == pygame.K_RETURN:
                 self._trigger_grid_cell_at(self._selection.get_coords())
         elif game_state == GameState.MAIN:
-            if key == pygame.K_j:
+            if key in [pygame.K_j, pygame.K_DOWN]:
                 self._ui.select_menu_go_down()
-            elif key == pygame.K_k:
+            elif key in [pygame.K_k, pygame.K_UP]:
                 self._ui.select_menu_go_up()
-            elif key == pygame.K_h:
+            elif key in [pygame.K_h, pygame.K_LEFT]:
                 self._ui.select_menu_go_left()
-            elif key == pygame.K_l:
+            elif key in [pygame.K_l, pygame.K_RIGHT]:
                 self._ui.select_menu_go_right()
             elif key == pygame.K_RETURN:
                 menu_selection = self._ui.get_current_menu_selection()
