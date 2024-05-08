@@ -89,13 +89,15 @@ class Grid:
         if self.get_state() != GridState.CONTINUE:
             return
         cell = self._cells[self._get_cell_index(coords)]
-        cell_state = cell.get_state()
+
+        # Allow FLAGGED cell to be triggered and opened
+        if cell.get_state() == CellState.FLAGGED:
+            cell.change_state_to(CellState.UNOPENED)
+
         if cell in self._mines:
-            if cell_state == CellState.FLAGGED:
-                cell.change_state_to(CellState.UNOPENED)
             cell.trigger()
             self._state = GridState.GAMEOVER
-        elif cell_state == CellState.UNOPENED:
+        elif cell.get_state() == CellState.UNOPENED:
             cell.trigger()
             if cell.get_label() == "0":
                 neighbors = self._get_cell_neighbors(cell)
