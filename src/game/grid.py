@@ -90,11 +90,11 @@ class Grid:
             return
         cell = self._cells[self._get_cell_index(coords)]
         cell_state = cell.get_state()
-        if cell_state == CellState.FLAGGED:
-            if cell in self._mines:
+        if cell in self._mines:
+            if cell_state == CellState.FLAGGED:
                 cell.change_state_to(CellState.UNOPENED)
-                cell.trigger()
-                self._state = GridState.GAMEOVER
+            cell.trigger()
+            self._state = GridState.GAMEOVER
         elif cell_state == CellState.UNOPENED:
             cell.trigger()
             if cell.get_label() == "0":
