@@ -9,7 +9,7 @@ from game.grid import Grid, GridState
 from game_state import GameState
 from selection import Selection
 from ui.fonts import FontSize, font_filepath
-from ui.images import flag_filepath
+from ui.images import flag_filepath, mine_filepath
 
 
 class Ui:
@@ -60,6 +60,7 @@ class Ui:
             "TO EXIT TO MAIN MENU", True, "white"
         )
         self._flag_img = pygame.image.load(flag_filepath)
+        self._mine_img = pygame.image.load(mine_filepath)
         self._setup_ui_surfaces_positions()
 
     def _setup_ui_surfaces_positions(self) -> None:
@@ -98,15 +99,15 @@ class Ui:
 
     def _setup_cell_labels_text(self) -> None:
         self.cell_labels_texts = {
-            "0": self._fonts[FontSize.Small].render("0", True, (55, 55, 55)),
-            "1": self._fonts[FontSize.Small].render("1", True, (0, 0, 255)),
-            "2": self._fonts[FontSize.Small].render("2", True, (0, 255, 0)),
-            "3": self._fonts[FontSize.Small].render("3", True, (255, 0, 0)),
-            "4": self._fonts[FontSize.Small].render("4", True, (0, 125, 255)),
-            "5": self._fonts[FontSize.Small].render("5", True, (125, 255, 0)),
-            "6": self._fonts[FontSize.Small].render("6", True, (255, 0, 125)),
-            "7": self._fonts[FontSize.Small].render("7", True, (62, 125, 255)),
-            "8": self._fonts[FontSize.Small].render("8", True, (125, 255, 62)),
+            "0": self._fonts[FontSize.Small].render("0", False, (55, 55, 55)),
+            "1": self._fonts[FontSize.Small].render("1", False, (0, 0, 255)),
+            "2": self._fonts[FontSize.Small].render("2", False, (0, 255, 0)),
+            "3": self._fonts[FontSize.Small].render("3", False, (255, 0, 0)),
+            "4": self._fonts[FontSize.Small].render("4", False, (0, 125, 255)),
+            "5": self._fonts[FontSize.Small].render("5", False, (125, 255, 0)),
+            "6": self._fonts[FontSize.Small].render("6", False, (255, 0, 125)),
+            "7": self._fonts[FontSize.Small].render("7", False, (62, 125, 255)),
+            "8": self._fonts[FontSize.Small].render("8", False, (125, 255, 62)),
         }
 
     def _update_outline_selection_y(self) -> None:
@@ -298,15 +299,12 @@ class Ui:
                 )
             elif cell_state == CellState.OPENED:
                 if cell_label == "M":
-                    # TODO: Draw a 'real' mine
-                    pygame.draw.circle(
-                        surface,
-                        "white",
+                    surface.blit(
+                        self._mine_img,
                         (
-                            x + self._cfg.grid_cell_size / 2,
-                            y + self._cfg.grid_cell_size / 2,
+                            x,
+                            y,
                         ),
-                        7,
                     )
                 else:
                     surface.blit(self.cell_labels_texts[cell_label], (x + 6, y))
