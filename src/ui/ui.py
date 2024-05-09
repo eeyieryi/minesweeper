@@ -34,30 +34,30 @@ class Ui:
 
     def _setup_ui_surfaces(self) -> None:
         self.game_title_text = self._fonts[FontSize.XLarge].render(
-            self._cfg.window_title.upper(), True, "blue"
+            self._cfg.window_title.upper(), False, "blue"
         )
         self._play_button_text = self._fonts[FontSize.Large].render(
-            "PLAY", True, "white"
+            "PLAY", False, "white"
         )
         self._exit_button_text = self._fonts[FontSize.Large].render(
-            "EXIT", True, "white"
+            "EXIT", False, "white"
         )
         self._difficulty_settings_texts = {
             EDifficulty.beginner: self._fonts[FontSize.Large].render(
-                EDifficulty.beginner.name.upper(), True, "green"
+                EDifficulty.beginner.name.upper(), False, "green"
             ),
             EDifficulty.intermediate: self._fonts[FontSize.Large].render(
-                EDifficulty.intermediate.name.upper(), True, "yellow"
+                EDifficulty.intermediate.name.upper(), False, "yellow"
             ),
             EDifficulty.expert: self._fonts[FontSize.Large].render(
-                EDifficulty.expert.name.upper(), True, "red"
+                EDifficulty.expert.name.upper(), False, "red"
             ),
         }
         self._gameover_info_text_actions = self._fonts[FontSize.Medium].render(
-            "PRESS (ESC)APE OR CLICK HERE", True, "white"
+            "PRESS (ESC)APE OR CLICK HERE", False, "white"
         )
         self._gameover_info_text = self._fonts[FontSize.Medium].render(
-            "TO EXIT TO MAIN MENU", True, "white"
+            "TO EXIT TO MAIN MENU", False, "white"
         )
         self._flag_img = pygame.image.load(flag_filepath)
         self._mine_img = pygame.image.load(mine_filepath)
@@ -244,7 +244,7 @@ class Ui:
             elif grid_state == GridState.GAMEOVER:
                 grid_state_text_color = "red"
             grid_state_text = self._fonts[FontSize.Large].render(
-                grid.get_state().name, True, grid_state_text_color
+                grid.get_state().name, False, grid_state_text_color
             )
             surface.blit(
                 grid_state_text,
@@ -252,7 +252,7 @@ class Ui:
             )
         mines_left_count = grid.get_mines_left_count()
         mines_left_count_text = self._fonts[FontSize.Large].render(
-            f"{mines_left_count}", True, (255, 0, 0)
+            f"{mines_left_count}", False, (255, 0, 0)
         )
         surface.blit(
             mines_left_count_text,
