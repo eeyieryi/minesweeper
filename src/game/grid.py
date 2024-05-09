@@ -85,7 +85,7 @@ class Grid:
         cell_index = self._get_cell_index(coords)
         self._cells[cell_index].toggle_flag_mark()
 
-    def trigger_cell_at(self, coords: tuple[int, int]) -> GridState:
+    def trigger_cell_at(self, coords: tuple[int, int], deep: int = 0) -> GridState:
         if self.get_state() != GridState.CONTINUE:
             return
         cell = self._cells[self._get_cell_index(coords)]
@@ -103,7 +103,12 @@ class Grid:
                 neighbors = self._get_cell_neighbors(cell)
                 for neighbor in neighbors:
                     if neighbor.get_label() != "M":
-                        self.trigger_cell_at(neighbor.get_coords())
+                        self.trigger_cell_at(neighbor.get_coords(), deep)
+            elif cell.get_label() == "1" and deep < 1:
+                neighbors = self._get_cell_neighbors(cell)
+                for neighbor in neighbors:
+                    if neighbor.get_label() != "M":
+                        self.trigger_cell_at(neighbor.get_coords(), deep + 1)
             self._check_state()
         return self.get_state()
 
