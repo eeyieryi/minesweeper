@@ -43,3 +43,7 @@ This is a [minesweeper](https://en.wikipedia.org/wiki/Minesweeper_(video_game)) 
     ```sh
     python src/main.py
     ```
+
+## Screenshots
+
+![solved grid](/screenshots/solved.png)
