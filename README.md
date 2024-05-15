@@ -21,7 +21,7 @@ This is a [minesweeper](https://en.wikipedia.org/wiki/Minesweeper_(video_game)) 
     or
 
     ```sh
-    pip3 -r requirements.txt
+    pip3 install -r requirements.txt
     ```
 
     or
