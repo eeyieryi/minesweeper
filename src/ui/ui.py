@@ -312,13 +312,14 @@ class Ui:
 
             if grid_state == GridState.GAMEOVER:
                 if cell_label == "M":
-                    surface.blit(
-                        self._mine_img,
-                        (
-                            x,
-                            y,
-                        ),
-                    )
+                    if cell_state != CellState.FLAGGED:
+                        surface.blit(
+                            self._mine_img,
+                            (
+                                x,
+                                y,
+                            ),
+                        )
                 else:
                     if cell_state == CellState.FLAGGED:
                         surface.blit(self.cell_labels_texts[cell_label], (x + 6, y))
