@@ -319,6 +319,9 @@ class Ui:
                             y,
                         ),
                     )
+                else:
+                    if cell_state == CellState.FLAGGED:
+                        surface.blit(self.cell_labels_texts[cell_label], (x + 6, y))
 
     def _draw_selection(self, surface: pygame.Surface) -> None:
         if self._show_selection:
