@@ -260,6 +260,7 @@ class Ui:
         )
 
     def _draw_grid(self, surface: pygame.Surface, grid: Grid) -> None:
+        grid_state = grid.get_state()
         for cell in grid.get_cells():
             cell_state = cell.get_state()
             cell_label = cell.get_label()
@@ -308,6 +309,16 @@ class Ui:
                     )
                 else:
                     surface.blit(self.cell_labels_texts[cell_label], (x + 6, y))
+
+            if grid_state == GridState.GAMEOVER:
+                if cell_label == "M":
+                    surface.blit(
+                        self._mine_img,
+                        (
+                            x,
+                            y,
+                        ),
+                    )
 
     def _draw_selection(self, surface: pygame.Surface) -> None:
         if self._show_selection:
